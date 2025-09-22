@@ -10,11 +10,25 @@ import (
 func startRepl() {
 	sc := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Print("> Pokedex ")
+		fmt.Printf("\n> Pokedex ")
 		sc.Scan()
 		inputs := sc.Text()
-		inputsSlice := cleanInput(inputs)
-		fmt.Printf("Your command was: %s\n", inputsSlice[0])
+		words := cleanInput(inputs)
+		if len(words) <= 0 {
+			fmt.Println("err: no commands/inputs are provided")
+			continue
+		}
+		command := words[0]
+		v, ok := commandRegistry[command]
+		if !ok {
+			fmt.Println("Unkown command")
+			continue
+		}
+		err := v.callback()
+		if err != nil {
+			fmt.Printf("Could not execute the command, err : %v", err)
+			continue
+		}
 	}
 }
 
