@@ -7,8 +7,20 @@ import (
 	"strings"
 )
 
+type config struct {
+	Next     string
+	Previous string
+}
+
+type cliCommand struct {
+	name        string
+	description string
+	callback    func(v *config) error
+}
+
 func startRepl() {
 	sc := bufio.NewScanner(os.Stdin)
+	c := &config{}
 	for {
 		fmt.Printf("\n> Pokedex ")
 		sc.Scan()
@@ -24,7 +36,7 @@ func startRepl() {
 			fmt.Println("Unkown command")
 			continue
 		}
-		err := v.callback()
+		err := v.callback(c)
 		if err != nil {
 			fmt.Printf("Could not execute the command, err : %v", err)
 			continue
