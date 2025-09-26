@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/mohdanas96/pokedex-go/api"
 )
 
 func commandExit(c *config) error {
@@ -16,27 +14,20 @@ func commandExit(c *config) error {
 func commandHelp(c *config) error {
 	fmt.Printf("\nWelcome to the Pokedex!\n\n")
 	fmt.Printf("Usage:\n")
-	for k, v := range commandRegistry {
+	for k, v := range getCommand() {
 		fmt.Printf("%s: %s\n", k, v.description)
 	}
 	return nil
 }
 
 func commandMap(c *config) error {
-	queryParams, err := ExtractQueryParamsFromUrl(c.Next)
-
+	data, err := c.pokeapiClient.GetLocationData(c.Next)
 	if err != nil {
 		return err
 	}
 
-	urlParams := api.Url{PathParams: "", QueryParams: queryParams}
-	data, err := api.GetLocationData(urlParams)
-	if err != nil {
-		return err
-	}
-
-	c.Next = data.Next
-	c.Previous = data.Previous
+	c.Next = &data.Next
+	c.Previous = &data.Previous
 
 	for _, v := range data.Results {
 		fmt.Println(v.Name)
@@ -46,24 +37,18 @@ func commandMap(c *config) error {
 }
 
 func commandMapB(c *config) error {
-	if c.Previous == "" {
+	if c.Previous == nil {
 		fmt.Println("you're on the first page")
 		return nil
 	}
-	queryParams, err := ExtractQueryParamsFromUrl(c.Previous)
 
+	data, err := c.pokeapiClient.GetLocationData(c.Previous)
 	if err != nil {
 		return err
 	}
 
-	urlParams := api.Url{PathParams: "", QueryParams: queryParams}
-	data, err := api.GetLocationData(urlParams)
-	if err != nil {
-		return err
-	}
-
-	c.Next = data.Next
-	c.Previous = data.Previous
+	c.Next = &data.Next
+	c.Previous = &data.Previous
 
 	for _, v := range data.Results {
 		fmt.Println(v.Name)

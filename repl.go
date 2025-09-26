@@ -5,11 +5,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/mohdanas96/pokedex-go/internal/pokeapi"
 )
 
 type config struct {
-	Next     string
-	Previous string
+	pokeapiClient pokeapi.Client
+	Next          *string
+	Previous      *string
 }
 
 type cliCommand struct {
@@ -30,13 +33,13 @@ func startRepl() {
 			fmt.Println("err: no commands/inputs are provided")
 			continue
 		}
-		command := words[0]
-		v, ok := commandRegistry[command]
-		if !ok {
+		commandName := words[0]
+		command, exists := getCommand()[commandName]
+		if !exists {
 			fmt.Println("Unkown command")
 			continue
 		}
-		err := v.callback(c)
+		err := command.callback(c)
 		if err != nil {
 			fmt.Printf("Could not execute the command, err : %v", err)
 			continue
@@ -47,4 +50,28 @@ func startRepl() {
 func cleanInput(text string) []string {
 	sliceOfTexts := strings.Split(strings.ToLower(strings.TrimSpace(text)), " ")
 	return sliceOfTexts
+}
+
+func getCommand() map[string]cliCommand {
+	return map[string]cliCommand{
+		"exit": {
+			name:        "exit",
+			description: "Exit the pokedex",
+			callback:    commandExit,
+		},
+		"help": {
+			name:        "help",
+			description: "Displays a help message",
+			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 locations in pokeworld",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "map back",
+			description: "Display the previous 20 location in pokeworld",
+			callback:    commandMapB,
+		}}
 }
