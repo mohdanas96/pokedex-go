@@ -21,9 +21,8 @@ type cliCommand struct {
 	callback    func(v *config) error
 }
 
-func startRepl() {
+func startRepl(c *config) {
 	sc := bufio.NewScanner(os.Stdin)
-	c := &config{}
 	for {
 		fmt.Printf("\n> Pokedex ")
 		sc.Scan()
