@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (c *Client) GetLocationData(pageUrl *string) (RespLocations, error) {
+func (c *Client) GetLocations(pageUrl *string) (RespLocations, error) {
 	fullUrl := baseUrl + "/location-area"
 	if pageUrl != nil {
 		fullUrl = *pageUrl

@@ -11,8 +11,9 @@ import (
 
 type config struct {
 	pokeapiClient pokeapi.Client
-	Next          *string
-	Previous      *string
+	pokedex       map[string]Pokemon
+	next          *string
+	previous      *string
 }
 
 type cliCommand struct {
@@ -21,10 +22,18 @@ type cliCommand struct {
 	callback    func(v *config, args []string) error
 }
 
+type Pokemon struct {
+	name   string
+	height int
+	weight int
+	types  []string
+	stats  map[string]int
+}
+
 func startRepl(c *config) {
 	sc := bufio.NewScanner(os.Stdin)
 	for {
-		fmt.Printf("\n> Pokedex ")
+		fmt.Printf("Pokedex > ")
 		sc.Scan()
 		inputs := sc.Text()
 		words := cleanInput(inputs)
@@ -79,8 +88,18 @@ func getCommand() map[string]cliCommand {
 		},
 		"explore": {
 			name:        "explore",
-			description: "Displays all the pokemons in a specific location",
+			description: "Displays all the Pokemons in a specific location",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Tries to catch a Pokemon and stores it",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Displays the info about the Pokemon",
+			callback:    commandInspect,
 		},
 	}
 }
