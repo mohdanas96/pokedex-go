@@ -124,6 +124,7 @@ func commandCatch(c *config, args []string) error {
 
 	c.pokedex[pokemonName] = Pokemon{name: pokemonName, height: data.Height, weight: data.Weight, types: types, stats: stats}
 	fmt.Printf("%v was caught!\n", pokemonName)
+	fmt.Printf("You may now inspect it with inspect command\n")
 
 	return nil
 }
@@ -152,5 +153,15 @@ func commandInspect(c *config, args []string) error {
 		fmt.Printf(" - %v\n", v)
 	}
 
+	return nil
+}
+
+func commandPokedex(c *config, args []string) error {
+	if len(c.pokedex) == 0 {
+		fmt.Println("Your pokedex is empty..! Use 'catch' to catch a Pokemon")
+	}
+	for k := range c.pokedex {
+		fmt.Println(k)
+	}
 	return nil
 }
